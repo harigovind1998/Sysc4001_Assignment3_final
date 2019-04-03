@@ -1,0 +1,26 @@
+HOW IT WORKS:
+    The client side acts as the front end for the admin, and waits for a command. One a command is entered, the program determines the message type,
+    requests all the necessary data fields and sends it as a message to the server/book-keeper and waits for a response form the serve. When the Message
+    is received by the server, it uses the message type field in the message to execute the approprioate command and send a response to the client accordigly.
+    2 message queues were used:
+        1. One message queue to send a message to the server 
+        2. one message quese to send a message back the client
+    
+    When sending the message from the client to the server, the message contains a message type field and a struct with all the employee details. For some functions
+    all the fields are not required, so the prompts in the client side only updates the necessary fields. 
+
+    ***WHY I DIDNT USE A LOOP IN THE EMPLOYEE ID REQUEST BY DEPARTMENT NAME***
+    The get check(Department name) returns a pointer to an array of the first 5 or less found employees in the department. My original idea was for the server to send 
+    the number of messages the client should expect and to send that many messages in:
+        for(int i =0; i<length returned by check; i++){
+            msgsnd(empid);
+        }
+
+    and for the client:
+        for(int i =0; i<length returned by check; i++){
+            msgrcv();
+        }
+    
+    but the issue i ran into was that when executed, the loop was skipped each time and the code after it was executed BUT when the next command is sent to the server
+    it executed the loop. I know its a bit hard to understand, but i can show it to you in person if you would like. Im just justifying my smelly code :( 
+    

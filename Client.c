@@ -117,7 +117,23 @@ int main(){
                 fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
                 exit(EXIT_FAILURE);
             }
-            printf("%d, ", ArrayMsg.EmpIds);
+            if(ArrayMsg.EmpIds!=0){
+                printf("%d, ", ArrayMsg.EmpIds);
+            }
+            if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
+                fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
+                exit(EXIT_FAILURE);
+            }
+            if(ArrayMsg.EmpIds!=0){
+                printf("%d, ", ArrayMsg.EmpIds);
+            }
+            if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
+                fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
+                exit(EXIT_FAILURE);
+            }
+            if(ArrayMsg.EmpIds!=0){
+                printf("%d, ", ArrayMsg.EmpIds);
+            }
             if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
                 fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
                 exit(EXIT_FAILURE);
@@ -127,22 +143,12 @@ int main(){
                 fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
                 exit(EXIT_FAILURE);
             }
-            printf("%d, ", ArrayMsg.EmpIds);
-            if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
-                fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
-                exit(EXIT_FAILURE);
-            }
-            printf("%d, ", ArrayMsg.EmpIds);
-            if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
-                fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
-                exit(EXIT_FAILURE);
-            }
-            printf("%d ", ArrayMsg.EmpIds);
+            printf("%d", ArrayMsg.EmpIds);
             if (msgrcv(ClientMsgQueue, (void *)&TxtMsg, BUFSIZ,0, 0) == -1) {fprintf(stderr, "msgrcv failed with error: %d\n", errno);
 			    fprintf(stderr, "msgrcv for norm msg failed with error: %d\n", errno);
                 exit(EXIT_FAILURE);
 		    }
-            printf("%s.\n",TxtMsg.msg);
+            printf("...%s Receiving Employee ID's.\n",TxtMsg.msg);
         }
     }
 }
