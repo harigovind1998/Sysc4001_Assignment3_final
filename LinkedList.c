@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+//Created a LinkedList library to store the employee's in the server side.
+//Followed simple Linked list algorythm 
 struct node{
     struct Employee Employee;
     struct node *next;

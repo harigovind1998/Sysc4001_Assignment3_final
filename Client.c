@@ -11,28 +11,32 @@
 #define SERVER_MSGQUEUE 1234
 #define CLIENT_MSGQUEUE 4321
 
-struct ReceivedMsg
+//Message to send
+struct ToSendMsg
 {
     long int msg_type;
-    struct Employee ReceivedInfo;
+    struct Employee ReceivedInfo; //Employee struct
 };
 
-struct SendMsgTxt
+//received text message of length 12
+struct RecTxtMsg
 {
     long int msg_type;
     char msg[12];
 };
 
-struct SendMsgArray
+//Used to display the employee's in a dept
+struct RecArrayMsg
 {
     long int msg_type;
     int EmpIds;
 };
 
-struct ReceivedMsg ReceivedMsg;
-struct SendMsgTxt TxtMsg;
-struct SendMsgArray ArrayMsg;
+struct ToSendMsg MsgToSend;
+struct RecTxtMsg TxtMsg;
+struct RecArrayMsg ArrayMsg;
 
+//Waits for an input, sends the message to the server Message box and waits for a response to be returned to the Client Message box
 int main(){
     int running = 1;
     int ServerMsgQueue, ClientMsgQueue;
@@ -44,43 +48,45 @@ int main(){
         exit(EXIT_FAILURE);
     }
     while(running){
+        //Asks the admin what function they want to do
         printf("\n1: Insert, 2: CheckName, 3: CheckDeptName, 4: CheckSalary, 5: GetEmpId, 6: DeptEmployees, 7: DeleteEmp, 8:End \n");
-        scanf("%ld", &(ReceivedMsg.msg_type));
-        switch (ReceivedMsg.msg_type)
+        scanf("%ld", &(MsgToSend.msg_type));
+        switch (MsgToSend.msg_type)
         {
+            //Takes the approprioate inputs
             case 1:
                 printf("\nEnter employee Name: ");
-                scanf("%s", ReceivedMsg.ReceivedInfo.Name);
+                scanf("%s", MsgToSend.ReceivedInfo.Name);
                 printf("\nEnter employee Department: ");
-                scanf("%s", ReceivedMsg.ReceivedInfo.DepName);
+                scanf("%s", MsgToSend.ReceivedInfo.DepName);
                 printf("\nEnter employee ID: ");
-                scanf("%d", &ReceivedMsg.ReceivedInfo.EmpID);
+                scanf("%d", &MsgToSend.ReceivedInfo.EmpID);
                 printf("\nEnter employee Salary: ");
-                scanf("%f", &ReceivedMsg.ReceivedInfo.Salary);
+                scanf("%f", &MsgToSend.ReceivedInfo.Salary);
                 break;
             case 2:
                 printf("\nEnter employee ID: ");
-                scanf("%d", &ReceivedMsg.ReceivedInfo.EmpID);
+                scanf("%d", &MsgToSend.ReceivedInfo.EmpID);
                 break;
             case 3:
                 printf("\nEnter employee ID: ");
-                scanf("%d", &ReceivedMsg.ReceivedInfo.EmpID);
+                scanf("%d", &MsgToSend.ReceivedInfo.EmpID);
                 break;
             case 4:
                 printf("\nEnter employee ID: ");
-                scanf("%d", &ReceivedMsg.ReceivedInfo.EmpID);
+                scanf("%d", &MsgToSend.ReceivedInfo.EmpID);
                 break;  
             case 5:
                 printf("Enter employee Name: ");
-                scanf("%s", ReceivedMsg.ReceivedInfo.Name);
+                scanf("%s", MsgToSend.ReceivedInfo.Name);
                 break;  
             case 6:
                 printf("Enter Department Name: ");
-                scanf("%s", ReceivedMsg.ReceivedInfo.DepName);
+                scanf("%s", MsgToSend.ReceivedInfo.DepName);
                 break;
             case 7:
                 printf("Enter employee ID: ");
-                scanf("%d", &ReceivedMsg.ReceivedInfo.EmpID);
+                scanf("%d", &MsgToSend.ReceivedInfo.EmpID);
                 break;
             case 8:
                 running =0;
@@ -88,18 +94,24 @@ int main(){
             default:
                 break;
         }
-        if (msgsnd(ServerMsgQueue, (void *)&ReceivedMsg, sizeof(struct Employee), 0) == -1) {
+        //Sends the message with the specified message type
+        if (msgsnd(ServerMsgQueue, (void *)&MsgToSend, sizeof(struct Employee), 0) == -1) {
 		 	fprintf(stderr, "msgsnd failed\n");
 			exit(EXIT_FAILURE);
 		}
         printf("Message sent, waiting for response...\n");
-        if(((ReceivedMsg.msg_type) != 6)){
+        if(((MsgToSend.msg_type) != 6)){ //If the message sent was not a department request, it just displays the response
             if (msgrcv(ClientMsgQueue, (void *)&TxtMsg, BUFSIZ,0, 0) == -1) {fprintf(stderr, "msgrcv failed with error: %d\n", errno);
 			    fprintf(stderr, "msgrcv for norm msg failed with error: %d\n", errno);
                 exit(EXIT_FAILURE);
 		    }
             printf("Response: %s\n",TxtMsg.msg);
         }else{
+            //If the message was a Department request, prints the first 5 emeployees Id in the server. I know that I could have done this in a 
+            //for or while loop, but for some reason in the server side, it kept skipping the loop and only printed out the responses when the next
+            //command was sent to the server to process. I can show this to you in person, and im not entierly sure it wasnt working as expected with
+            //a loop.
+            //This works.
             printf("Response: ");
             if(msgrcv(ClientMsgQueue,(void *) &ArrayMsg, sizeof(int),0 ,0)==-1){
                 fprintf(stderr, "msgrcv for array failed with error: %d\n", errno);
